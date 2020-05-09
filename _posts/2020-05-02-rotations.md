@@ -74,7 +74,8 @@ and $$\mb R \p { \theta, \varphi, \psi } v$$ gives us the rotated vector given a
     *Orientation differs subtly from rotation. Just think of orientation as being absolute, and rotation as being relative. Alternatively, orientation describes the mapping of a rotated coordinate system to the reference coordinate system, while rotation is the operation that maps any particular coordinate system to a rotated one. In other words, rotation simply acts on an already established orientation. In the 2D case, we could use \(R \p { -\alpha, v }\) to adjust \(v\) from its orientation frame defined by \(\theta\) back to the reference coordinate system. In the same way, the orientation defined by \(\alpha\) can be rotated, with \(\gamma = \alpha + \beta\) giving us \(\gamma\) as a new orientation.
 </div>
 
-<!--<div align="center">
+<div align="center">
+    <script src="/assets/js/three.js"></script>
     <script>
         var scene = new THREE.Scene();
         var camera = new THREE.PerspectiveCamera(90, 1, 0.1, 1000);
@@ -97,4 +98,4 @@ and $$\mb R \p { \theta, \varphi, \psi } v$$ gives us the rotated vector given a
 
         animate();
     </script>
-</div>-->
+</div>
