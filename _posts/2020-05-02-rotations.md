@@ -1,10 +1,6 @@
 ---
-layout: post
-title:  "Welcome to Jekyll!"
-date:   2020-05-08 23:04:14 -0400
-categories: jekyll update
+author: Yevano
 ---
-
 $
     \newcommand{\mb}[1]{\mathbf #1}
     \newcommand{\bb}[1]{\mathbb #1}
@@ -49,27 +45,66 @@ $
         \phantom {-cos\\:} 1 & \phantom {-cos\\:} 0 & \phantom {-cos\\:} 0 \\\
         \phantom {-cos\\:} 0 & \phantom {-} cos\\:\theta & -sin\\:\theta \\\
         \phantom {-cos\\:} 0 & \phantom {-} sin\\:\theta & \phantom {-} cos\\:\theta
+    \end{bmatrix} \\\
+    \mb R_y \p { \theta } =
+    \begin{bmatrix}
+        \phantom {-} cos\\:\theta & \phantom {-cos\\:} 0 & \phantom {-} sin\\:\theta \\\
+        \phantom {-cos\\:} 0 & \phantom {-cos\\:} 1 & \phantom {-cos\\:} 0 \\\
+        \phantom {-} sin\\:\theta & \phantom {-cos\\:} 0 & \phantom {-} cos\\:\theta
+    \end{bmatrix} \\\
+    \mb R_z \p { \theta } =
+    \begin{bmatrix}
+        \phantom {-} cos\\:\theta & -sin\\:\theta & \phantom {-cos\\:} 0 \\\
+        \phantom {-} sin\\:\theta & \phantom {-} cos\\:\theta & \phantom {-cos\\:} 0 \\\
+        \phantom {-cos\\:} 0 & \phantom {-cos\\:} 0 & \phantom {-cos\\:} 1
     \end{bmatrix}
 $
 
-Jekyll requires blog post files to be named according to the following format:
+Putting it all together, we get
+$
+    \mb R \p { \theta, \varphi, \psi } = \mb R_z \p { \theta } \mb R_y \p { \varphi } \mb R_x \p { \psi }
+$, 
+and $\mb R \p { \theta, \varphi, \psi } v$ gives us the rotated vector given an initial vector $v$.
 
-`YEAR-MONTH-DAY-title.MARKUP`
+<!-- <script src="/assets/js/three.js"></script>
+<div align="center">
+    <script>
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(90, 1, 0.1, 1000);
 
-Where `YEAR` is a four-digit number, `MONTH` and `DAY` are both two-digit numbers, and `MARKUP` is the file extension representing the format used in the file. After that, include the necessary front matter. Take a look at the source for this post to get an idea about how it works.
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(640, 640);
+        document.body.appendChild( renderer.domElement );
 
-Jekyll also offers powerful support for code snippets:
+        var geometry = new THREE.BoxGeometry();
+        var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+        var cube = new THREE.Mesh( geometry, material );
+        scene.add( cube );
 
-{% highlight ruby %}
-def print_hi(name)
-  puts "Hi, #{name}"
-end
-print_hi('Tom')
-#=> prints 'Hi, Tom' to STDOUT.
-{% endhighlight %}
+        camera.position.z = 5;
 
-Check out the [Jekyll docs][jekyll-docs] for more info on how to get the most out of Jekyll. File all bugs/feature requests at [Jekyll’s GitHub repo][jekyll-gh]. If you have questions, you can ask them on [Jekyll Talk][jekyll-talk].
+        function animate() {
+            requestAnimationFrame( animate );
+            renderer.render( scene, camera );
+        }
 
-[jekyll-docs]: https://jekyllrb.com/docs/home
-[jekyll-gh]:   https://github.com/jekyll/jekyll
-[jekyll-talk]: https://talk.jekyllrb.com/
+        animate();
+    </script>
+</div> -->
+
+<div align="center">
+    <script type="text/tikz">
+        \begin{tikzpicture}
+            \draw (0, 0, 0) circle (3);
+        \end{tikzpicture}
+    </script>
+</div>
+
+<style>
+    .smallmath {
+        font-size: 75%;
+    }
+</style>
+<div class="smallmath">
+    *Orientation differs subtly from rotation. Just think of orientation as being absolute, and rotation as being relative. Alternatively, orientation describes the mapping of a rotated coordinate system to the reference coordinate system, while rotation is the operation that maps any particular coordinate system to a rotated one. In other words, rotation simply acts on an already established orientation. In the 2D case, we could use $R \p { -\alpha, v }$ to adjust $v$ from its orientation frame defined by $\theta$ back to the reference coordinate system. In the same way, the orientation defined by $\alpha$ can be rotated, with $\gamma = \alpha + \beta$ giving us $\gamma$ as a new orientation.
+</div>
