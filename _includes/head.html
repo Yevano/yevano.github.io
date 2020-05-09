@@ -10,18 +10,13 @@
     {%- endif -%}
     <script type="text/x-mathjax-config">
         MathJax.Hub.Config({
-            tex2jax: {
-                inlineMath: [['$','$']],
-                displayMath: [['\\[','\\]']],
-                processEscapes: true,
-            },
+            jax: ["input/TeX", "input/MathML", "input/AsciiMath", "output/CommonHTML"],
             extensions: [
                 "MathMenu.js",
                 "MathZoom.js",
                 "AssistiveMML.js",
                 "a11y/accessibility-menu.js"
             ],
-            jax: ["input/TeX", "output/CommonHTML"],
             TeX: {
                 extensions: [
                     "AMSmath.js",
