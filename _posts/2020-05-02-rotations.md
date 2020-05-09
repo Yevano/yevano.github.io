@@ -74,28 +74,28 @@ and $$\mb R \p { \theta, \varphi, \psi } v$$ gives us the rotated vector given a
     *Orientation differs subtly from rotation. Just think of orientation as being absolute, and rotation as being relative. Alternatively, orientation describes the mapping of a rotated coordinate system to the reference coordinate system, while rotation is the operation that maps any particular coordinate system to a rotated one. In other words, rotation simply acts on an already established orientation. In the 2D case, we could use \(R \p { -\alpha, v }\) to adjust \(v\) from its orientation frame defined by \(\theta\) back to the reference coordinate system. In the same way, the orientation defined by \(\alpha\) can be rotated, with \(\gamma = \alpha + \beta\) giving us \(\gamma\) as a new orientation.
 </div>
 
-<div align="center">
-    <script src="/assets/js/three.js"></script>
-    <script>
-        var scene = new THREE.Scene();
-        var camera = new THREE.PerspectiveCamera(90, 1, 0.1, 1000);
+<div id="euler" align="center">
+<div>
 
-        var renderer = new THREE.WebGLRenderer();
-        renderer.setSize(640, 640);
-        document.body.appendChild( renderer.domElement );
+<script src="/assets/js/three.js"></script>
+<script>
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(90, 1, 0.1, 1000);
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(640, 640);
+    document.getElementById("euler").appendChild( renderer.domElement );
 
-        var geometry = new THREE.BoxGeometry();
-        var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-        var cube = new THREE.Mesh( geometry, material );
-        scene.add( cube );
+    var geometry = new THREE.BoxGeometry();
+    var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+    var cube = new THREE.Mesh( geometry, material );
+    scene.add( cube );
 
-        camera.position.z = 5;
+    camera.position.z = 5;
 
-        function animate() {
-            requestAnimationFrame( animate );
-            renderer.render( scene, camera );
-        }
+    function animate() {
+        requestAnimationFrame( animate );
+        renderer.render( scene, camera );
+    }
 
-        animate();
-    </script>
-</div>
+    animate();
+</script>
