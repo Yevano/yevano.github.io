@@ -1,6 +1,44 @@
-import "/assets/js/three.js";
+import { createShader, createProgram } from "/assets/js/gfx.js";
 
-export function circleGeometry(radius, transform) {
+let vertexShaderResource = fetch("/assets/sl/geometry.vert");
+let fragmentShaderResource = fetch("/assets/sl/geometry.frag");
+
+export async function drawGeometry(gl) {
+    var vertexShader = createShader(gl, gl.VERTEX_SHADER, await vertexShaderResource.then(response => response.text()));
+    var fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, await fragmentShaderResource.then(response => response.text()));
+    var program = createProgram(gl, vertexShader, fragmentShader);
+
+    var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+    var positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+    // three 2d points
+    var positions = [
+        0, 0,
+        0, 0.5,
+        0.7, 0,
+    ];
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+    var vao = gl.createVertexArray();
+    gl.bindVertexArray(vao);
+
+    gl.enableVertexAttribArray(positionAttributeLocation);
+
+    gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    gl.useProgram(program);
+    gl.bindVertexArray(vao);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+}
+
+export function drawCircle(radius, transform) {
   var points = [];
 
   for (var i = 0; i < 64; i++) {
@@ -18,11 +56,11 @@ export function circleGeometry(radius, transform) {
 
     b = column(mulMatrix(transform, b));
 
-    points.push(new THREE.Vector3(...a));
-    points.push(new THREE.Vector3(...b));
+    points.push(a);
+    points.push(b);
   }
 
-  return new THREE.BufferGeometry().setFromPoints(points);
+//  return new THREE.BufferGeometry().setFromPoints(points);
 }
 
 function vectorFrom(object) {

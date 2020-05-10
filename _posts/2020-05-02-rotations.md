@@ -74,7 +74,8 @@ and $$\mb R \p { \theta, \varphi, \psi } v$$ gives us the rotated vector given a
     *Orientation differs subtly from rotation. Just think of orientation as being absolute, and rotation as being relative. Alternatively, orientation describes the mapping of a rotated coordinate system to the reference coordinate system, while rotation is the operation that maps any particular coordinate system to a rotated one. In other words, rotation simply acts on an already established orientation. In the 2D case, we could use \(R \p { -\alpha, v }\) to adjust \(v\) from its orientation frame defined by \(\theta\) back to the reference coordinate system. In the same way, the orientation defined by \(\alpha\) can be rotated, with \(\gamma = \alpha + \beta\) giving us \(\gamma\) as a new orientation.
 </div>
 
-<div id="euler" align="center">
+<div align="center">
+    <canvas id="euler" width="640" height="640">
 </div>
 
 <script type="module" src="/assets/js/euler.js"></script>
