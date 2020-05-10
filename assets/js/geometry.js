@@ -1,6 +1,7 @@
-function drawCircle(radius, transform) {
-  strokeWeight(2);
-  beginShape(LINES);
+require("/assets/js/three.js");
+
+function circleGeometry(radius, transform) {
+  var points = [];
 
   for (var i = 0; i < 64; i++) {
     var a = columnVector(
@@ -17,11 +18,11 @@ function drawCircle(radius, transform) {
 
     b = column(mulMatrix(transform, b));
 
-    vertex(...a);
-    vertex(...b);
+    points.push(new THREE.Vector3(...a));
+    points.push(new THREE.Vector3(...b));
   }
 
-  endShape();
+  return new THREE.BufferGeometry().setFromPoints(points);
 }
 
 function vectorFrom(object) {
