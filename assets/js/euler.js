@@ -1,5 +1,8 @@
-require("/assets/js/three.js");
-require("/assets/js/geometry.js");
+import "/assets/js/three.js";
+import {
+    circleGeometry,
+    identity
+} from "/assets/js/geometry.js";
 
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(90, 1, 0.1, 1000);

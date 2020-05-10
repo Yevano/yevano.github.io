@@ -1,19 +1,19 @@
-require("/assets/js/three.js");
+import "/assets/js/three.js";
 
-function circleGeometry(radius, transform) {
+export function circleGeometry(radius, transform) {
   var points = [];
 
   for (var i = 0; i < 64; i++) {
     var a = columnVector(
-      cos(i / 64 * 2 * PI) * radius,
-      -sin(i / 64 * 2 * PI) * radius,
+      Math.cos(i / 64 * 2 * Math.PI) * radius,
+      -Math.sin(i / 64 * 2 * Math.PI) * radius,
       0);
 
     a = column(mulMatrix(transform, a));
 
     var b = columnVector(
-      cos((i + 1) / 64 * 2 * PI) * radius,
-      -sin((i + 1) / 64 * 2 * PI) * radius,
+      Math.cos((i + 1) / 64 * 2 * Math.PI) * radius,
+      -Math.sin((i + 1) / 64 * 2 * Math.PI) * radius,
       0);
 
     b = column(mulMatrix(transform, b));
@@ -93,12 +93,12 @@ function circleFrom(object) {
       // or into it.
       
       // var ortho = crossProduct(normalize(transformedRight), normalize(pointVector));
-      // var angleFromXToThroughPoint = asin(length(ortho));
+      // var angleFromXToThroughPoint = aMath.sin(length(ortho));
       
-      // Since ortho is already normal to the plane, this can (mathematically)
+      // Math.Since ortho is already normal to the plane, this can (mathematically)
       // only give us two values. The angle is zero if they have the same direction,
       // or pi if they have opposite direction.
-      /*var angleFromCrossToPlaneNormal = asin(length(crossProduct(ortho, target)));
+      /*var angleFromCrossToPlaneNormal = aMath.sin(length(crossProduct(ortho, target)));
       
       if(angleFromCrossToPlaneNormal > PI / 2) {
         angleFromXToThroughPoint = 2 * PI -angleFromXToThroughPoint;
@@ -116,9 +116,9 @@ function circleFrom(object) {
   }
 }
 
-xAxis3 = [1, 0, 0];
-yAxis3 = [0, 1, 0];
-zAxis3 = [0, 0, 1];
+let xAxis3 = [1, 0, 0];
+let yAxis3 = [0, 1, 0];
+let zAxis3 = [0, 0, 1];
 
 function iterExpr() {
   if (arguments.length > 0) {
@@ -279,7 +279,7 @@ function transpose(a) {
   return Array.from(iterMap(iterRange(n), i => column(a, i)));
 }
 
-function identity(d) {
+export function identity(d) {
   var result = [];
 
   for (var i = 0; i < d; i++) {
@@ -296,8 +296,8 @@ function angleAxis(angle, axis) {
   var x = axis[0];
   var y = axis[1];
   var z = axis[2];
-  var c = cos(angle);
-  var s = sin(angle);
+  var c = Math.cos(angle);
+  var s = Math.sin(angle);
   var t = 1 - c;
 
   return [
@@ -313,7 +313,7 @@ function lookAt(eye, direction) {
   }
 
   var axis = crossProduct(eye, direction);
-  var angle = acos(dotProduct(eye, direction));
+  var angle = aMath.cos(dotProduct(eye, direction));
   return angleAxis(angle, normalize(axis));
 }
 
@@ -347,14 +347,14 @@ function addObject(a) {
   return a;
 }
 
-function createPoint(a) {
+export function createPoint(a) {
   return addObject({
     type: "pointObject",
     tuple: a
   });
 }
 
-function createLineSegment(a, b) {
+export function createLineSegment(a, b) {
   return addObject({
     type: "lineSegmentObject",
     a: a,
@@ -362,14 +362,14 @@ function createLineSegment(a, b) {
   });
 }
 
-function createCircleRadius(radius) {
+export function createCircleRadius(radius) {
   return addObject({
     type: "circleRadiusObject",
     radius: radius
   });
 }
 
-function createAxisRadiusCircle(axis, radius) {
+export function createAxisRadiusCircle(axis, radius) {
   return addObject({
     type: "axisRadiusCircleObject",
     axis: axis,
@@ -377,7 +377,7 @@ function createAxisRadiusCircle(axis, radius) {
   });
 }
 
-function createPointOnCircle(circle, normalAxis, referenceAxis, angle) {
+export function createPointOnCircle(circle, normalAxis, referenceAxis, angle) {
   return addObject({
     type: "pointOnCircleObject",
     circle: circle,
@@ -387,7 +387,7 @@ function createPointOnCircle(circle, normalAxis, referenceAxis, angle) {
   });
 }
 
-function createAxisPointCircle(axis, point) {
+export function createAxisPointCircle(axis, point) {
   return addObject({
     type: "axisPointCircleObject",
     axis: axis,

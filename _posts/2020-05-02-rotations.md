@@ -77,4 +77,4 @@ and $$\mb R \p { \theta, \varphi, \psi } v$$ gives us the rotated vector given a
 <div id="euler" align="center">
 </div>
 
-{% include script.html path="/assets/js/euler.js" %}
+<script type="module" src="/assets/js/euler.js"></script>
