@@ -3,64 +3,136 @@ import { createShader, createProgram } from "/assets/js/gfx.js";
 let vertexShaderResource = fetch("/assets/sl/geometry.vert");
 let fragmentShaderResource = fetch("/assets/sl/geometry.frag");
 
-export async function drawGeometry(gl) {
-    var vertexShader = createShader(gl, gl.VERTEX_SHADER, await vertexShaderResource.then(response => response.text()));
-    var fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, await fragmentShaderResource.then(response => response.text()));
-    var program = createProgram(gl, vertexShader, fragmentShader);
+let objects = [];
 
-    var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+export class Geometry {
+    constructor(gl) {
+        this.gl = gl;
+        this.objects = [];
+    }
+
+    async drawGeometry() {
+        var gl = this.gl;
+        var vertexShader = createShader(gl, gl.VERTEX_SHADER, await vertexShaderResource.then(response => response.text()));
+        var fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, await fragmentShaderResource.then(response => response.text()));
+        var program = createProgram(gl, vertexShader, fragmentShader);
+    
+        var matrixAttributeLocation = gl.getUniformLocation(program, "u_matrix");
+    
+        requestAnimationFrame(drawScene);
+    
+        function drawScene(now) {
+            now /= 1000;
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    
+            gl.clearColor(0, 0, 0, 255);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    
+            gl.enable(gl.DEPTH_TEST);
+            gl.enable(gl.CULL_FACE);
+    
+            gl.useProgram(program);
+            var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+    
+            /*var transform = angleAxis(0, [0, 0, 1]);
+            transform = mulMatrix(perspectiveProjection(1000, 0.01, Math.PI / 2, 1), expandMatrix(transform, 1, 1));
+            transform = toFlatMatrix(transform);*/
+            var cameraTransform = identity(4);
+            cameraTransform = mulMatrix(translation([0, 0, Math.sin(now) - 3]), cameraTransform);
+            cameraTransform = mulMatrix(angleAxis(0, [0, 1, 0]), cameraTransform);
+            cameraTransform = mulMatrix(perspectiveProjection(20, 0.01, Math.PI / 4, 1), cameraTransform);
+    
+            gl.uniformMatrix4fv(matrixAttributeLocation, false, toFlatMatrix(cameraTransform));
+            drawCircle(gl, 1, mulMatrix(angleAxis(0, [0, 1, 0]), translation([0, 0, 10])), positionAttributeLocation);
+    
+            requestAnimationFrame(drawScene);
+        }
+    }
+
+    addObject(a) {
+        this.objects.push(a);
+        return a;
+    }
+      
+    createPoint(a) {
+        return this.addObject({
+            type: "pointObject",
+            tuple: a
+        });
+    }
+    
+    createLineSegment(a, b) {
+        return this.addObject({
+            type: "lineSegmentObject",
+            a: a,
+            b: b
+        });
+    }
+    
+    createCircleRadius(radius) {
+        return this.addObject({
+            type: "circleRadiusObject",
+            radius: radius
+        });
+    }
+    
+    createAxisRadiusCircle(axis, radius) {
+        return this.addObject({
+            type: "axisRadiusCircleObject",
+            axis: axis,
+            radius: radius
+        });
+    }
+    
+    createPointOnCircle(circle, normalAxis, referenceAxis, angle) {
+        return this.addObject({
+            type: "pointOnCircleObject",
+            circle: circle,
+            normalAxis: normalAxis,
+            referenceAxis: referenceAxis,
+            angle: angle
+        });
+    }
+    
+    createAxisPointCircle(axis, point) {
+        return this.addObject({
+            type: "axisPointCircleObject",
+            axis: axis,
+            point: point
+        });
+    }
+}
+
+export function drawCircle(gl, radius, transform, location) {
+    var points = [];
+
+    for (var i = 0; i < 64; i++) {
+        var a = columnVector(
+            Math.cos(i / 64 * 2 * Math.PI) * radius,
+            -Math.sin(i / 64 * 2 * Math.PI) * radius,
+            0,
+            1);
+
+        a = column(mulMatrix(transform, a)).slice(0, 3);
+
+        points.push(...a);
+        //points.push(...b);
+    }
+
     var positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-    // three 2d points
-    var positions = [
-        0, 0,
-        0, 0.5,
-        0.7, 0,
-    ];
-
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(points), gl.DYNAMIC_DRAW);
     var vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
 
-    gl.enableVertexAttribArray(positionAttributeLocation);
+    gl.enableVertexAttribArray(location);
 
-    gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(location, 3, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.LINE_LOOP, 0, points.length / 3);
+    gl.deleteBuffer(positionBuffer);
+    gl.deleteVertexArray(vao);
 
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-
-    gl.clearColor(0, 0, 0, 0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-
-    gl.useProgram(program);
-    gl.bindVertexArray(vao);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
-}
-
-export function drawCircle(radius, transform) {
-  var points = [];
-
-  for (var i = 0; i < 64; i++) {
-    var a = columnVector(
-      Math.cos(i / 64 * 2 * Math.PI) * radius,
-      -Math.sin(i / 64 * 2 * Math.PI) * radius,
-      0);
-
-    a = column(mulMatrix(transform, a));
-
-    var b = columnVector(
-      Math.cos((i + 1) / 64 * 2 * Math.PI) * radius,
-      -Math.sin((i + 1) / 64 * 2 * Math.PI) * radius,
-      0);
-
-    b = column(mulMatrix(transform, b));
-
-    points.push(a);
-    points.push(b);
-  }
-
-//  return new THREE.BufferGeometry().setFromPoints(points);
 }
 
 function vectorFrom(object) {
@@ -330,6 +402,15 @@ export function identity(d) {
   return result;
 }
 
+function translation(a) {
+    return [
+        [1, 0, 0, a[0]],
+        [0, 1, 0, a[1]],
+        [0, 0, 1, a[2]],
+        [0, 0, 0, 1],
+    ];
+}
+
 function angleAxis(angle, axis) {
   var x = axis[0];
   var y = axis[1];
@@ -339,10 +420,37 @@ function angleAxis(angle, axis) {
   var t = 1 - c;
 
   return [
-    [t * x * x + c, t * x * y - z * s, t * x * z + y * s],
-    [t * x * y + z * s, t * y * y + c, t * y * z - x * s],
-    [t * x * z - y * s, t * y * z + x * s, t * z * z + c]
+    [t * x * x + c, t * x * y - z * s, t * x * z + y * s, 0],
+    [t * x * y + z * s, t * y * y + c, t * y * z - x * s, 0],
+    [t * x * z - y * s, t * y * z + x * s, t * z * z + c, 0],
+    [0, 0, 0, 1]
   ];
+}
+
+function perspectiveProjection(far, near, fov, aspectRatio) {
+    var s = 1 / Math.tan(fov);
+    /*return [
+        [s, 0, 0, 0,],
+        [0, s * aspectRatio, 0, 0],
+        [0, 0, far / (far - near), -1],
+        [0, 0, -far * near / (far - near), 0]
+    ];*/
+    var f = Math.tan(fov);
+    var rangeInv = 1.0 / (near - far);
+
+    return [
+        [f / aspectRatio, 0, 0, 0],
+        [0, f, 0, 0],
+        [0, 0, (near + far) * rangeInv, -1],
+        [0, 0, near * far * rangeInv * 2, 0],
+    ];
+
+    /*return [
+        [s, 0, 0, 0],
+        [0, s, 0, 0],
+        [0, 0, -far / (far - near), -far * near / (far - near)],
+        [0, 0, -1, 0],
+    ];*/
 }
 
 function lookAt(eye, direction) {
@@ -378,57 +486,4 @@ function mulMatrix(a, b) {
   }
 
   return result;
-}
-
-function addObject(a) {
-  objects.push(a);
-  return a;
-}
-
-export function createPoint(a) {
-  return addObject({
-    type: "pointObject",
-    tuple: a
-  });
-}
-
-export function createLineSegment(a, b) {
-  return addObject({
-    type: "lineSegmentObject",
-    a: a,
-    b: b
-  });
-}
-
-export function createCircleRadius(radius) {
-  return addObject({
-    type: "circleRadiusObject",
-    radius: radius
-  });
-}
-
-export function createAxisRadiusCircle(axis, radius) {
-  return addObject({
-    type: "axisRadiusCircleObject",
-    axis: axis,
-    radius: radius
-  });
-}
-
-export function createPointOnCircle(circle, normalAxis, referenceAxis, angle) {
-  return addObject({
-    type: "pointOnCircleObject",
-    circle: circle,
-    normalAxis: normalAxis,
-    referenceAxis: referenceAxis,
-    angle: angle
-  });
-}
-
-export function createAxisPointCircle(axis, point) {
-  return addObject({
-    type: "axisPointCircleObject",
-    axis: axis,
-    point: point
-  });
 }
