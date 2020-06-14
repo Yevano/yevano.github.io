@@ -30,22 +30,27 @@ window.addEventListener("load", _ => {
                 return date_a < date_b;
             });
 
-            for(let content of data.Contents) {
+            contents.forEach(content => {
                 var file_url = `${ share_url }/${ content.Key }`
+                var file_name = `${ content.Key.substr(file_url.indexOf("/")) }`;
+
+                var img_div
 
                 var file_img_element = document.createElement("img");
                 file_img_element.src = file_url;
                 file_img_element.style = "width: 400px";
+                file_img_element.onerror = event => {
+                    file_img_element.onerror = null;
+                    img_div.removeChild(file_img_element);
+                }
 
-                var img_div = document.createElement("div");
+                img_div = document.createElement("div");
                 img_div.className = "file-item";
                 img_div.appendChild(file_img_element);
-
-                var text = `${ content.Key.substr(file_url.indexOf("/")) }`;
                 
                 var info_anchor = document.createElement("a");
                 info_anchor.href = file_url;
-                info_anchor.appendChild(document.createTextNode(text));
+                info_anchor.appendChild(document.createTextNode(file_name));
 
                 var info_div = document.createElement("div");
                 info_div.className = "file-item";
@@ -55,7 +60,7 @@ window.addEventListener("load", _ => {
 
                 file_list_element.appendChild(img_div);
                 file_list_element.appendChild(info_div);
-            }
+            });
         }
     })
 });
