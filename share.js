@@ -24,6 +24,12 @@ window.addEventListener("load", _ => {
         if(err) {
             alert(`Could not list share files. Error: ${ err.message }`);
         } else {
+            var contents = data.Contents.sort((a, b) => {
+                var date_a = a.LastModified;
+                var date_b = b.LastModified;
+                return date_a < date_b;
+            });
+
             for(let content of data.Contents) {
                 var file_url = `${ share_url }/${ content.Key }`
 
